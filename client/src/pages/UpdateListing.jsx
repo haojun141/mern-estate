@@ -28,6 +28,7 @@ export default function CreateListing() {
     parking: false,
     furnished: false,
   });
+
   const [imageUploadError, setImageUploadError] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(false);
@@ -280,7 +281,7 @@ export default function CreateListing() {
                 required
                 className="p-3 border border-gray-300 rounded-lg"
                 onChange={handleChange}
-                value={formData.bathrooms}
+                value={formData.bathrooms || ""}
               />
               <p>Baths</p>
             </div>
