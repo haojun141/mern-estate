@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ListingItem from "../components/ListingItem";
 
@@ -13,9 +13,11 @@ export default function Search() {
     sort: "created_at",
     order: "desc",
   });
+
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
-  const [showMore, setShowmore] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchTermFromUrl = urlParams.get("searchTerm");
@@ -45,18 +47,22 @@ export default function Search() {
         order: orderFromUrl || "desc",
       });
     }
+
     const fetchListings = async () => {
       setLoading(true);
-      setShowmore(false);
+      setShowMore(false);
       const searchQuery = urlParams.toString();
       const res = await fetch(`/api/listing/get?${searchQuery}`);
       const data = await res.json();
       if (data.length > 8) {
-        setShowmore(true);
+        setShowMore(true);
+      } else {
+        setShowMore(false);
       }
       setListings(data);
       setLoading(false);
     };
+
     fetchListings();
   }, [location.search]);
 
@@ -68,9 +74,11 @@ export default function Search() {
     ) {
       setSidebardata({ ...sidebardata, type: e.target.id });
     }
+
     if (e.target.id === "searchTerm") {
       setSidebardata({ ...sidebardata, searchTerm: e.target.value });
     }
+
     if (
       e.target.id === "parking" ||
       e.target.id === "furnished" ||
@@ -85,10 +93,13 @@ export default function Search() {
 
     if (e.target.id === "sort_order") {
       const sort = e.target.value.split("_")[0] || "created_at";
+
       const order = e.target.value.split("_")[1] || "desc";
+
       setSidebardata({ ...sidebardata, sort, order });
     }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const urlParams = new URLSearchParams();
@@ -104,21 +115,21 @@ export default function Search() {
   };
 
   const onShowMoreClick = async () => {
-    const numberOfListing = listings.length;
-    const startIndex = numberOfListing;
+    const numberOfListings = listings.length;
+    const startIndex = numberOfListings;
     const urlParams = new URLSearchParams(location.search);
     urlParams.set("startIndex", startIndex);
     const searchQuery = urlParams.toString();
     const res = await fetch(`/api/listing/get?${searchQuery}`);
     const data = await res.json();
     if (data.length < 9) {
-      setShowmore(false);
+      setShowMore(false);
     }
     setListings([...listings, ...data]);
   };
   return (
     <div className="flex flex-col md:flex-row">
-      <div className="p-7 border-b-2 md:border-r-2 md:min-h-screen">
+      <div className="p-7  border-b-2 md:border-r-2 md:min-h-screen">
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           <div className="flex items-center gap-2">
             <label className="whitespace-nowrap font-semibold">
@@ -224,18 +235,20 @@ export default function Search() {
         </h1>
         <div className="p-7 flex flex-wrap gap-4">
           {!loading && listings.length === 0 && (
-            <p className="text-xl text-slate-700">No listing found</p>
+            <p className="text-xl text-slate-700">No listing found!</p>
           )}
           {loading && (
             <p className="text-xl text-slate-700 text-center w-full">
               Loading...
             </p>
           )}
+
           {!loading &&
             listings &&
             listings.map((listing) => (
               <ListingItem key={listing._id} listing={listing} />
             ))}
+
           {showMore && (
             <button
               onClick={onShowMoreClick}
